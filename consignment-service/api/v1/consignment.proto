@@ -1,0 +1,34 @@
+// consignment-service/proto/consignment/consignment.proto
+syntax = "proto3";
+
+package consignment_proto; 
+
+service ShippingService {
+  rpc CreateConsignment(ConsignmentRequest) returns (ConsignmentResponse) {}
+}
+
+message ConsignmentRequest{
+    string api = 1;
+    Consignment consignment = 2;
+}
+
+message Consignment {
+  string id = 1;
+  string description = 2;
+  int32 weight = 3;
+  repeated Container containers = 4;
+  string vessel_id = 5;
+}
+
+message Container {
+  string id = 1;
+  string customer_id = 2;
+  string origin = 3;
+  string user_id = 4;
+}
+
+message ConsignmentResponse {
+  string api = 1;
+  bool created = 2;
+  Consignment consignment = 3;
+}
