@@ -1,0 +1,1 @@
+protoc -I . productservice.proto --go_out=plugins=grpc:%GOPATH%/src/github.com/carousell/orionexamples/productservice/pkg/api/v1 --orion_out=%GOPATH%/src/github.com/carousell/orionexamples/productservice/pkg/api/v1

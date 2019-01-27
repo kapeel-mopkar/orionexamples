@@ -22,10 +22,24 @@ func main() {
 
 	client := proto.NewConsignmentServiceClient(conn)
 
+	containersReq := []*proto.Container{
+		&proto.Container{
+			Origin:     "Dubai",
+			CustomerId: "CUST111",
+			UserId:     "User111",
+		},
+		&proto.Container{
+			Origin:     "India",
+			CustomerId: "CUST111",
+			UserId:     "User112",
+		},
+	}
+
 	consResponse, consErr := client.CreateConsignment(context.Background(), &proto.ConsignmentRequest{
 		Consignment: &proto.Consignment{
 			Weight:      1000,
 			Description: "Consignment 1000",
+			Containers:  containersReq,
 		},
 		Api: "v1",
 	})

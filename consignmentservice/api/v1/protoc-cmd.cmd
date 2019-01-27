@@ -1,1 +1,1 @@
-protoc -I . consignment.proto --go_out=plugins=grpc:%GOPATH%/src/github.com/carousell/orionexamples/consignment-service/pkg/api/v1 --orion_out=%GOPATH%/src/github.com/carousell/orionexamples/consignment-service/pkg/api/v1
+protoc -I . consignment.proto --go_out=plugins=grpc:%GOPATH%/src/github.com/carousell/orionexamples/consignmentservice/pkg/api/v1 --orion_out=%GOPATH%/src/github.com/carousell/orionexamples/consignmentservice/pkg/api/v1

@@ -23,9 +23,10 @@ const (
 )
 
 func (s *svcFactory) NewService(orion.Server) interface{} {
-	//initDb()
+	initDb()
+	db.AutoMigrate(&Consignment{})
 	return &svc{
-		//db: db,
+		db: db,
 	}
 }
 
@@ -49,6 +50,10 @@ func initDb() {
 		panic(err)
 	}
 	log.Println("Successfully connected!")
+
+	if !db.HasTable(&Consignment{}) {
+		db.CreateTable(&Consignment{})
+	}
 }
 
 func dbConfig() map[string]string {
@@ -76,7 +81,7 @@ func dbConfig() map[string]string {
 	conf[dbhost] = "localhost"
 	conf[dbport] = "5432"
 	conf[dbuser] = "postgres"
-	conf[dbpass] = "postgres"
-	conf[dbname] = "postgres"
+	conf[dbpass] = "pwd123"
+	conf[dbname] = "shippingapp"
 	return conf
 }

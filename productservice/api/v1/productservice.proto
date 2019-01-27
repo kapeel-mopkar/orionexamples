@@ -1,0 +1,26 @@
+// productservice.proto
+syntax = "proto3";
+
+package product_proto; 
+
+service ProductService {
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {}
+}
+
+message CreateProductRequest{
+    string api = 1;
+    Product product = 2;
+}
+
+message Product {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  float price = 4;
+}
+
+message CreateProductResponse {
+  string api = 1;
+  bool created = 2;
+  Product product = 3;
+}
