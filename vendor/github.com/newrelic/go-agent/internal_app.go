@@ -58,8 +58,6 @@ type app struct {
 	collectorErrorChan chan internal.RPMResponse
 	connectChan        chan *appRun
 
-	harvestTicker *time.Ticker
-
 	// This mutex protects both `run` and `err`, both of which should only
 	// be accessed using getState and setState.
 	sync.RWMutex
@@ -229,9 +227,12 @@ func (app *app) process() {
 	var h *internal.Harvest
 	var run *appRun
 
+	harvestTicker := time.NewTicker(internal.HarvestPeriod)
+	defer harvestTicker.Stop()
+
 	for {
 		select {
-		case <-app.harvestTicker.C:
+		case <-harvestTicker.C:
 			if nil != run {
 				now := time.Now()
 				go app.doHarvest(h, now, run)
@@ -247,7 +248,6 @@ func (app *app) process() {
 			// Remove the run before merging any final data to
 			// ensure a bounded number of receives from dataChan.
 			app.setState(nil, errors.New("application shut down"))
-			app.harvestTicker.Stop()
 
 			if nil != run {
 				for done := false; !done; {
@@ -410,8 +410,6 @@ func newApp(c Config) (Application, error) {
 		return app, nil
 	}
 
-	app.harvestTicker = time.NewTicker(internal.HarvestPeriod)
-
 	go app.process()
 	go app.connectRoutine()
 
@@ -478,7 +476,7 @@ func (app *app) StartTransaction(name string, w http.ResponseWriter, r *http.Req
 	txn := upgradeTxn(newTxn(txnInput{
 		Config:     app.config,
 		Reply:      run.ConnectReply,
-		W:          w,
+		writer:     w,
 		Consumer:   app,
 		attrConfig: run.AttributeConfig,
 	}, name))

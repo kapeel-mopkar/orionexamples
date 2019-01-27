@@ -3,7 +3,7 @@
 -- DROP TABLE shippingapp.consignments
 
 CREATE TABLE shippingapp.consignments (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	description varchar(500) NULL,
 	weight int4 NULL,
 	CONSTRAINT consignments_pk PRIMARY KEY (id)
@@ -19,15 +19,17 @@ GRANT ALL ON TABLE shippingapp.consignments TO postgres;
 -- DROP TABLE shippingapp.containers
 
 CREATE TABLE shippingapp.containers (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	customer_id varchar(50) NULL,
 	user_id varchar(50) NULL,
 	origin varchar(100) NULL,
 	consignment_id int4 NOT NULL,
-	CONSTRAINT containers_pk PRIMARY KEY (id)
+	CONSTRAINT containers_pk PRIMARY KEY (id),
+	CONSTRAINT containers_consignments_fk FOREIGN KEY (consignment_id) REFERENCES consignments(id)
 );
 
 -- Permissions
 
 ALTER TABLE shippingapp.containers OWNER TO postgres;
 GRANT ALL ON TABLE shippingapp.containers TO postgres;
+

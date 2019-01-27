@@ -1,16 +1,18 @@
-package main
+package service
 
 import (
-	"database/sql"
 	"fmt"
+	"log"
 
 	"github.com/carousell/Orion/orion"
-	proto "github.com/carousell/orionexamples/consignment-service/pkg/api/v1"
-	"github.com/carousell/orionexamples/consignment-service/pkg/service"
-	_ "github.com/lib/pq"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres" // Need for connecting to POSTGRES DB
 )
 
-var db *sql.DB
+type svcFactory struct{}
+
+var db *gorm.DB
 
 const (
 	dbhost = "DBHOST"
@@ -20,14 +22,19 @@ const (
 	dbname = "DBNAME"
 )
 
-func main() {
-	initDb()
-	defer db.Close()
+func (s *svcFactory) NewService(orion.Server) interface{} {
+	//initDb()
+	return &svc{
+		//db: db,
+	}
+}
 
-	server := orion.GetDefaultServer("ShippingService")               //.GetDefaultServer("StringService")
-	proto.RegisterShippingServiceServer(service.GetFactory(), server) //RegisterStringServiceOrionServer(service.GetFactory(), server)
-	server.Start()
-	server.Wait()
+func (s *svcFactory) DisposeService(svc interface{}) {
+	log.Println("Disposing SVCFactory service")
+}
+
+func GetFactory() orion.ServiceFactory {
+	return &svcFactory{}
 }
 
 func initDb() {
@@ -37,15 +44,11 @@ func initDb() {
 		config[dbhost], config[dbport],
 		config[dbuser], config[dbpass], config[dbname])
 
-	db, err = sql.Open("postgres", psqlInfo)
+	db, err = gorm.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Successfully connected!")
+	log.Println("Successfully connected!")
 }
 
 func dbConfig() map[string]string {
@@ -74,6 +77,6 @@ func dbConfig() map[string]string {
 	conf[dbport] = "5432"
 	conf[dbuser] = "postgres"
 	conf[dbpass] = "postgres"
-	conf[dbname] = "shippingapp"
+	conf[dbname] = "postgres"
 	return conf
 }
