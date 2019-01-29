@@ -78,10 +78,10 @@ func dbConfig() map[string]string {
 	// if !ok {
 	// 	panic("DBNAME environment variable required but not set")
 	// }
-	conf[dbhost] = "localhost"
+	conf[dbhost] = "localhost"//"localhost"
 	conf[dbport] = "5432"
 	conf[dbuser] = "postgres"
-	conf[dbpass] = "pwd123"
+	conf[dbpass] = "postgres"
 	conf[dbname] = "shippingapp"
 	return conf
 }
